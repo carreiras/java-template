@@ -1,0 +1,71 @@
+app:
+  name: ${projectName}
+  centro_custo: ${costCenter}
+  value_stream: ${valueStream}
+
+clusters:
+  - name: ${clustersName}
+
+deploy:
+  spec:
+    replicas: 1
+
+  environment: DEV
+  namespace: ${namespace}
+  base_url_istio: http://ingress.internal.global.ti.teste.intranet:8443
+  loadtest_enabled_for_hom: false
+
+  resources:
+    request_memory: "500M"
+    request_cpu: "250m"
+    limit_memory: "1024M"
+    limit_cpu: "500m"
+
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+  configmap:
+    SPRING_PROFILES_ACTIVE: DEV
+    JAVA_OPTS: -Xms768m -Xmx768m
+    TIMEZONE: America/Sao_Paulo
+    SERVER_PORT: 8443
+    SERVER_PARALELISM: "200"
+    LOG_LEVEL_ROOT: "INFO"
+    LOG_LEVEL_BR_COM_BRADESCO: "INFO"
+    LOG_LEVEL_OKHTTP3: "OFF"
+    LOG_LEVEL_ORG_SPRINGFRAMEWORK: "INFO"
+    ENV_SRV_AUT_TIMEOUT: "5000"
+    ENV_SRV_AUT_MAX_CONNECTION_POLL: "1"
+     ENV_PATH_CERTIFICADO1: /mnt/secrets-store/certificado.pem
+
+  hpa:
+    min_replicas: 1
+    max_replicas: 2
+
+  probes:
+    startup_path: "/health/liveness"
+    startup_probe_failure_threshold: 30
+    startup_probe_initial_delay_seconds: 0
+    startup_period: 10
+    readiness_path: "/health/readiness"
+    readiness_initial_delay: 10
+    readiness_failure_threshold: 3
+    readiness_period: 30
+    liveness_path: "/health/liveness"
+    liveness_initial_delay: 10
+    liveness_failure_threshold: 3
+    liveness_period: 20
+
+  metrics:
+    target_cpu_utilization_percentage: 80
+    # Habilite esse trecho caso utilize Azure Key Vault. Ele deve estar no nível do .deploy.
+    # Tenant id. Até então, só temos esse tenant id abaixo.
+    #  azurekv:
+    #    tenant_id: ccd25372-eb59-436a-ad74-78a49d784cf3
+    #    key_vault:
+    #      name: kvazuprbrakitsprinb001
+    #      objects:
+    #        - name: redis_config_password
+    #          type: secret
+    #          version: null
