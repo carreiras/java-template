@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: brai-bff-corp-pesquisasatisfacao
+  description: BFF para pesquisa de satisfação
+  labels:
+    centro-de-custo: "brai"
+    tecnologia-linguagem: "typescript-3.6.4"
+    tecnologia-framework: "express-4.17.1"
+    torre: "corp"
+    ambiente: "ti-hibrida"
+    dominio-arquitetural: "bff"
+    version: ${versionTemplate}
+  tags:
+    - typescript
+spec:
+  type: service
+  lifecycle: produção
+  owner: brai-centro-custo
+  system: bra-sys-adquirir-emprestar
